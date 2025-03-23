@@ -27,8 +27,10 @@ def ottieni_info_generali():
             info['subnet'] = ipv4.get('netmask', 'N/D')
             break
 
+    # Gateway
     info['gateway'] = ottieni_gateway()
 
+    # DNS
     try:
         risultato = subprocess.run("netsh interface ip show dns", capture_output=True, text=True)
         dns = re.findall(r'\d+\.\d+\.\d+\.\d+', risultato.stdout)
@@ -36,10 +38,17 @@ def ottieni_info_generali():
     except:
         info['dns'] = 'N/D'
 
+    # SSID – funziona solo se connessi via WiFi
     try:
         risultato = subprocess.run("netsh wlan show interfaces", capture_output=True, text=True)
         match = re.search(r'SSID\s+:\s(.+)', risultato.stdout)
-        info['ssid'] = match.group(1).strip() if match else 'N/D'
+        ssid = match.group(1).strip() if match else None
+
+        # Controlla che non sia vuoto o "N/A"
+        if ssid and ssid.upper() != "N/A":
+            info['ssid'] = ssid
+        else:
+            info['ssid'] = 'N/D'
     except:
         info['ssid'] = 'N/D'
 

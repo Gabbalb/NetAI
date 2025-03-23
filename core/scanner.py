@@ -20,15 +20,28 @@ def scan_network(network_range):
 def scan_dettagliata(device):
     scanner = nmap.PortScanner()
     try:
-        scanner.scan(hosts=device.ip, arguments='-T4 -F')
+        # OS detection avanzata con guessing
+        scanner.scan(hosts=device.ip, arguments='-T4 -A --osscan-guess')
         host_info = scanner[device.ip]
 
+        # Proviamo prima con osmatch
         os_match = host_info.get('osmatch', [])
-        os_name = os_match[0]['name'] if os_match else 'N/D'
-        porte = [f"{p}/tcp ({host_info['tcp'][p]['name']})"
-                 for p in host_info.get('tcp', {})]
+        os_name = os_match[0]['name'] if os_match else None
 
-        device.os = os_name
+        # Se fallisce, proviamo con osclass
+        if not os_name:
+            os_class = host_info.get('osclass', [])
+            os_name = os_class[0]['osfamily'] if os_class else 'N/D'
+
+        device.os = os_name or 'N/D'
+
+        # Porte aperte
+        porte = []
+        for proto in ('tcp', 'udp'):
+            if proto in host_info:
+                for p in host_info[proto]:
+                    nome = host_info[proto][p].get('name', '')
+                    porte.append(f"{p}/{proto} ({nome})")
         device.porte = porte
     except:
         device.os = 'Errore'
