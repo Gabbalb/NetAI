@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f678186e-f95f-4673-a4da-f3440bb4ea7f" name="Changes" comment="Add Graph">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/scanner.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/scanner.py" afterDir="false" />
+    <list default="true" id="f678186e-f95f-4673-a4da-f3440bb4ea7f" name="Changes" comment="Update graph">
+      <change afterPath="$PROJECT_DIR$/gui/layout.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gui/mappa_canvas.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gui/scanner_thread.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gui/update_handlers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/gui_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/gui_main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/device.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/device.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,7 +139,7 @@
       <workItem from="1742752232684" duration="75000" />
       <workItem from="1742752315410" duration="343000" />
       <workItem from="1742752670803" duration="297000" />
-      <workItem from="1742761309525" duration="5600000" />
+      <workItem from="1742761309525" duration="5870000" />
     </task>
     <task id="LOCAL-00001" summary="First Version">
       <option name="closed" value="true" />
@@ -164,7 +165,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742765210015</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Update graph">
+      <option name="closed" value="true" />
+      <created>1742766972618</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1742766972618</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -174,7 +183,8 @@
     <MESSAGE value="First Version" />
     <MESSAGE value="Organized Files" />
     <MESSAGE value="Add Graph" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Graph" />
+    <MESSAGE value="Update graph" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update graph" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/NetAI$main.coverage" NAME="main Coverage Results" MODIFIED="1742766512223" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
