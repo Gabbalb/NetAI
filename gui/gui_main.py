@@ -3,11 +3,19 @@ from tkinter import ttk
 import threading
 import math
 
-
 from core.scanner import scan_network, scan_dettagliata
 from core.info_rete import ottieni_gateway, ottieni_intervallo_rete, ottieni_info_generali
 from models.device import Device
 
+# Icone in stile emoji per i tipi
+ICONE = {
+    "Router": "📡",
+    "Switch": "🔀",
+    "PC": "💻",
+    "Smartphone": "📱",
+    "Stampante": "🖨️",
+    "Dispositivo": "🔘"
+}
 
 class NetScannerGUI:
     def __init__(self, root):
@@ -17,14 +25,12 @@ class NetScannerGUI:
         self.info_generali = {}
         self.gateway_ip = ""
 
-        self.nodi_canvas = {}  # nodo.id : [oval, label]
+        self.nodi_canvas = {}
         self.linee_canvas = []
 
         self.crea_layout()
 
     def crea_layout(self):
-
-
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(fill="both", expand=True)
 
@@ -44,10 +50,14 @@ class NetScannerGUI:
         self.scan_btn = ttk.Button(self.button_frame, text="Scansiona Rete", command=self.avvia_scansione)
         self.scan_btn.grid(row=0, column=0, padx=5)
 
-        self.tree = ttk.Treeview(self.tab_tabella, columns=("IP", "MAC", "Hostname", "OS", "Porte"), show="headings")
+        self.tree = ttk.Treeview(
+            self.tab_tabella,
+            columns=("IP", "MAC", "Hostname", "OS", "Tipo", "Porte"),
+            show="headings"
+        )
         for col in self.tree["columns"]:
             self.tree.heading(col, text=col)
-            self.tree.column(col, width=150)
+            self.tree.column(col, width=130)
         self.tree.pack(fill="both", expand=True, padx=10, pady=10)
 
         # --- Tab 2: Mappa Rete ---
@@ -59,15 +69,11 @@ class NetScannerGUI:
 
         self.canvas.bind("<B1-Motion>", self.trascina_nodo)
         self.canvas.bind("<Button-1>", self.seleziona_nodo)
-        self.canvas.bind("<MouseWheel>", self.zoom_canvas)  # Windows
-        self.canvas.bind("<Button-4>", self.zoom_canvas)  # Linux scroll up
-        self.canvas.bind("<Button-5>", self.zoom_canvas)  # Linux scroll down
+        self.canvas.bind("<MouseWheel>", self.zoom_canvas)
+        self.canvas.bind("<Button-4>", self.zoom_canvas)
+        self.canvas.bind("<Button-5>", self.zoom_canvas)
 
         self.nodo_attivo = None
-
-    def zoom_canvas(self, event):
-        scale = 1.1 if event.delta > 0 or event.num == 4 else 0.9
-        self.canvas.scale("all", event.x, event.y, scale, scale)
 
     def avvia_scansione(self):
         self.scan_btn.config(state="disabled")
@@ -88,15 +94,29 @@ class NetScannerGUI:
         for res in risultati:
             device = Device(**res)
             self.devices.append(device)
-            self.tree.insert("", "end", iid=device.ip, values=(device.ip, device.mac, device.hostname, device.os, ""))
+            self.tree.insert(
+                "", "end", iid=device.ip,
+                values=(device.ip, device.mac, device.hostname, device.os, device.tipo, "")
+            )
             threading.Thread(target=self.aggiorna_dettagli, args=(device,), daemon=True).start()
 
         self.aggiorna_info_generali()
-        self.root.after(1000, self.disegna_mappa)
+
+        def wait_and_draw():
+            if self.canvas.winfo_width() < 100:
+                self.root.after(100, wait_and_draw)
+            else:
+                self.disegna_mappa()
+
+        self.root.after(100, wait_and_draw)
 
     def aggiorna_dettagli(self, device):
         scan_dettagliata(device)
-        self.tree.item(device.ip, values=(device.ip, device.mac, device.hostname, device.os, ', '.join(device.porte)))
+        self.tree.item(
+            device.ip,
+            values=(device.ip, device.mac, device.hostname, device.os, device.tipo, ', '.join(device.porte))
+        )
+        self.aggiorna_icona_nodo(device)
 
     def aggiorna_info_generali(self):
         testo = "\n".join([f"{k.capitalize():<12}: {v}" for k, v in self.info_generali.items()])
@@ -136,16 +156,19 @@ class NetScannerGUI:
         else:
             colore = "lightgreen" if device.os != 'N/D' else "tomato"
 
+        icon = ICONE.get(device.tipo, "🔘")
+        testo = f"{icon}\n{device.hostname}\n{device.ip}"
+
         oval = self.canvas.create_oval(x - r, y - r, x + r, y + r, fill=colore, tags=device.ip)
-        label = self.canvas.create_text(x, y, text=f"{device.hostname}\n{device.ip}", font=("Arial", 8), tags=device.ip)
+        label = self.canvas.create_text(x, y, text=testo, font=("Segoe UI Emoji", 9), tags=device.ip)
         self.nodi_canvas[device.ip] = [oval, label]
 
     def crea_linea(self, ip1, ip2):
         x1, y1 = self.centro_nodo(ip1)
         x2, y2 = self.centro_nodo(ip2)
         linea = self.canvas.create_line(x1, y1, x2, y2, fill="gray", width=2)
-        self.linee_canvas.append((linea, ip1, ip2))
         self.canvas.tag_lower(linea)
+        self.linee_canvas.append((linea, ip1, ip2))
 
     def centro_nodo(self, ip):
         oval = self.nodi_canvas[ip][0]
@@ -173,6 +196,17 @@ class NetScannerGUI:
             x1, y1 = self.centro_nodo(ip1)
             x2, y2 = self.centro_nodo(ip2)
             self.canvas.coords(linea, x1, y1, x2, y2)
+
+    def aggiorna_icona_nodo(self, device):
+        if device.ip in self.nodi_canvas:
+            _, label = self.nodi_canvas[device.ip]
+            icon = ICONE.get(device.tipo, "🔘")
+            testo = f"{icon}\n{device.hostname}\n{device.ip}"
+            self.canvas.itemconfig(label, text=testo)
+
+    def zoom_canvas(self, event):
+        scale = 1.1 if event.delta > 0 or event.num == 4 else 0.9
+        self.canvas.scale("all", event.x, event.y, scale, scale)
 
 
 def avvia_gui():

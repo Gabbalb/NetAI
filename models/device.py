@@ -5,6 +5,7 @@ class Device:
         self.mac = mac
         self.os = 'in analisi...'
         self.porte = []
+        self.tipo = 'N/D'
 
     def __eq__(self, other):
         return self.ip == other.ip and self.mac == other.mac and self.os == other.os and self.porte == other.porte
