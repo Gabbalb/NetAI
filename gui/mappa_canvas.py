@@ -30,12 +30,23 @@ class MappaCanvas:
         spacing = 200
         angle_step = 360 / max(len(self.gui.devices), 1)
 
-        # Disegna gateway al centro
+        # Trova il gateway nella lista dei dispositivi
         gateway = next((d for d in self.gui.devices if d.ip == self.gui.gateway_ip), None)
-        if gateway:
-            self._crea_nodo(gateway, cx, cy)
 
-        # Altri dispositivi intorno
+        # Se non c'è un nodo gateway (es. rete pubblica), disegna i dispositivi senza collegamenti
+        if not gateway:
+            for i, device in enumerate(self.gui.devices):
+                angle = angle_step * i
+                rad = angle * math.pi / 180
+                x = int(cx + spacing * math.cos(rad))
+                y = int(cy + spacing * math.sin(rad))
+                self._crea_nodo(device, x, y)
+            return  # niente linea da gateway → fine
+
+        # Se gateway esiste, disegna al centro
+        self._crea_nodo(gateway, cx, cy)
+
+        # Altri nodi attorno e linee verso il gateway
         count = 0
         for device in self.gui.devices:
             if device.ip == self.gui.gateway_ip:
@@ -45,7 +56,7 @@ class MappaCanvas:
             x = int(cx + spacing * math.cos(rad))
             y = int(cy + spacing * math.sin(rad))
             self._crea_nodo(device, x, y)
-            self._crea_linea(self.gui.gateway_ip, device.ip)
+            self._crea_linea(gateway.ip, device.ip)
             count += 1
 
     def _crea_nodo(self, device, x, y):
