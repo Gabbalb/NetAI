@@ -4,16 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f678186e-f95f-4673-a4da-f3440bb4ea7f" name="Changes" comment="Upgrade modularity">
-      <change afterPath="$PROJECT_DIR$/traceroute/geoip_lookup.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/traceroute/traceroute_map.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/traceroute/traceroute_map_geo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/traceroute/traceroute_parser.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/traceroute/traceroute_runner.py" afterDir="false" />
+    <list default="true" id="f678186e-f95f-4673-a4da-f3440bb4ea7f" name="Changes" comment="Add Map">
+      <change afterPath="$PROJECT_DIR$/gui/tabs/tab_mappa_interna.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/scanner.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/scanner.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/layout.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/layout.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/mappa_canvas.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/mappa_canvas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/scanner_thread.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/scanner_thread.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/tab_dispositivi.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/rete.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/tab_mappa_esterna.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/tabs/tab_dispositivi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/tab_mappa_interna.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/tabs/tab_mappa_esterna.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gui/update_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/update_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/device.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/device.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +31,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -69,6 +72,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\balbi\PycharmProjects\NetAI\gui\tabs" />
+    </key>
+  </component>
   <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="NetAI" />
@@ -148,7 +156,9 @@
       <workItem from="1742810157172" duration="623000" />
       <workItem from="1742812436902" duration="988000" />
       <workItem from="1742833520260" duration="138000" />
-      <workItem from="1742846349849" duration="646000" />
+      <workItem from="1742846349849" duration="4939000" />
+      <workItem from="1742893409980" duration="18000" />
+      <workItem from="1742893630331" duration="1109000" />
     </task>
     <task id="LOCAL-00001" summary="First Version">
       <option name="closed" value="true" />
@@ -190,7 +200,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742767320293</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Add Map">
+      <option name="closed" value="true" />
+      <created>1742847244865</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1742847244865</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -202,10 +220,11 @@
     <MESSAGE value="Add Graph" />
     <MESSAGE value="Update graph" />
     <MESSAGE value="Upgrade modularity" />
-    <option name="LAST_COMMIT_MESSAGE" value="Upgrade modularity" />
+    <MESSAGE value="Add Map" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Map" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/NetAI$main.coverage" NAME="main Coverage Results" MODIFIED="1742846789268" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/NetAI$main.coverage" NAME="main Coverage Results" MODIFIED="1742894055736" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/NetAI$scan.coverage" NAME="scan Coverage Results" MODIFIED="1742762828802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

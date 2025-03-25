@@ -1,55 +1,81 @@
 import socket
 import netifaces
+import platform
 import subprocess
-import re
-import ipaddress
 
-def ottieni_gateway():
-    gws = netifaces.gateways()
-    return gws['default'][netifaces.AF_INET][0]
 
-def ottieni_intervallo_rete():
-    hostname = socket.gethostname()
-    ip_locale = socket.gethostbyname(hostname)
-    rete = ipaddress.IPv4Network(ip_locale + '/24', strict=False)
-    return str(rete)
+def get_ip_locale():
+    """Restituisce l'IP locale del dispositivo."""
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except:
+        return "N/D"
 
-def ottieni_info_generali():
-    info = {}
 
-    # IP e subnet
-    interfacce = netifaces.interfaces()
-    for iface in interfacce:
+def get_gateway():
+    """Restituisce l'indirizzo IP del gateway predefinito."""
+    try:
+        gws = netifaces.gateways()
+        return gws['default'][netifaces.AF_INET][0]
+    except:
+        return "N/D"
+
+
+def get_subnet():
+    """Restituisce la subnet mask della rete locale."""
+    try:
+        iface = get_interface()
+        return netifaces.ifaddresses(iface)[netifaces.AF_INET][0]['netmask']
+    except:
+        return "N/D"
+
+
+def get_interface():
+    """Restituisce il nome dell'interfaccia di rete attiva."""
+    ip_locale = get_ip_locale()
+    for iface in netifaces.interfaces():
         addrs = netifaces.ifaddresses(iface)
         if netifaces.AF_INET in addrs:
-            ipv4 = addrs[netifaces.AF_INET][0]
-            info['ip_locale'] = ipv4.get('addr', 'N/D')
-            info['subnet'] = ipv4.get('netmask', 'N/D')
-            break
+            for link in addrs[netifaces.AF_INET]:
+                if link.get('addr') == ip_locale:
+                    return iface
+    return None
 
-    # Gateway
-    info['gateway'] = ottieni_gateway()
 
-    # DNS
+def get_dns():
+    """Restituisce l'indirizzo IP del server DNS, se disponibile."""
     try:
-        risultato = subprocess.run("netsh interface ip show dns", capture_output=True, text=True)
-        dns = re.findall(r'\d+\.\d+\.\d+\.\d+', risultato.stdout)
-        info['dns'] = dns[0] if dns else 'N/D'
+        gws = netifaces.gateways()
+        iface = gws['default'][netifaces.AF_INET][1]
+        dns = netifaces.ifaddresses(iface).get(netifaces.AF_INET, [{}])[0].get('addr')
+        return dns or "N/D"
     except:
-        info['dns'] = 'N/D'
+        return "N/D"
 
-    # SSID – funziona solo se connessi via WiFi
+
+def get_ssid():
+    """Restituisce l'SSID della rete Wi-Fi (solo se disponibile)."""
     try:
-        risultato = subprocess.run("netsh wlan show interfaces", capture_output=True, text=True)
-        match = re.search(r'SSID\s+:\s(.+)', risultato.stdout)
-        ssid = match.group(1).strip() if match else None
-
-        # Controlla che non sia vuoto o "N/A"
-        if ssid and ssid.upper() != "N/A":
-            info['ssid'] = ssid
-        else:
-            info['ssid'] = 'N/D'
+        system = platform.system()
+        if system == "Windows":
+            output = subprocess.check_output("netsh wlan show interfaces", shell=True).decode()
+            for line in output.split("\n"):
+                if "SSID" in line and "BSSID" not in line:
+                    return line.split(":")[1].strip()
+        elif system == "Linux":
+            output = subprocess.check_output("iwgetid -r", shell=True).decode().strip()
+            return output
+        elif system == "Darwin":  # macOS
+            output = subprocess.check_output(
+                ["/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport", "-I"]
+            ).decode()
+            for line in output.split("\n"):
+                if " SSID" in line:
+                    return line.split(":")[1].strip()
     except:
-        info['ssid'] = 'N/D'
-
-    return info
+        pass
+    return "N/D"

@@ -24,16 +24,17 @@ class MappaCanvas:
     def disegna_grafo(self):
         self.reset_mappa()
 
+        # 🔄 Forza aggiornamento per ottenere le dimensioni corrette
+        self.canvas.update_idletasks()
+
         w = self.canvas.winfo_width()
         h = self.canvas.winfo_height()
         cx, cy = w // 2, h // 2
         spacing = 200
         angle_step = 360 / max(len(self.gui.devices), 1)
 
-        # Trova il gateway nella lista dei dispositivi
         gateway = next((d for d in self.gui.devices if d.ip == self.gui.gateway_ip), None)
 
-        # Se non c'è un nodo gateway (es. rete pubblica), disegna i dispositivi senza collegamenti
         if not gateway:
             for i, device in enumerate(self.gui.devices):
                 angle = angle_step * i
@@ -41,12 +42,10 @@ class MappaCanvas:
                 x = int(cx + spacing * math.cos(rad))
                 y = int(cy + spacing * math.sin(rad))
                 self._crea_nodo(device, x, y)
-            return  # niente linea da gateway → fine
+            return
 
-        # Se gateway esiste, disegna al centro
         self._crea_nodo(gateway, cx, cy)
 
-        # Altri nodi attorno e linee verso il gateway
         count = 0
         for device in self.gui.devices:
             if device.ip == self.gui.gateway_ip:
@@ -61,11 +60,7 @@ class MappaCanvas:
 
     def _crea_nodo(self, device, x, y):
         r = 40
-        if device.ip == self.gui.gateway_ip:
-            colore = "skyblue"
-        else:
-            colore = "lightgreen" if device.os != 'N/D' else "tomato"
-
+        colore = "skyblue" if device.ip == self.gui.gateway_ip else ("lightgreen" if device.os != 'N/D' else "tomato")
         icon = ICONE.get(device.tipo, "🔘")
         testo = f"{icon}\n{device.hostname}\n{device.ip}"
 
@@ -77,7 +72,7 @@ class MappaCanvas:
         x1, y1 = self._centro_nodo(ip1)
         x2, y2 = self._centro_nodo(ip2)
         linea = self.canvas.create_line(x1, y1, x2, y2, fill="gray", width=2)
-        self.canvas.tag_lower(linea)
+        self.canvas.tag_lower(linea)  # Metti la linea sotto ai nodi
         self.linee_canvas.append((linea, ip1, ip2))
 
     def _centro_nodo(self, ip):

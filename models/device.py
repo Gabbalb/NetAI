@@ -1,11 +1,11 @@
 class Device:
-    def __init__(self, ip, hostname, mac):
+    def __init__(self, ip):
         self.ip = ip
-        self.hostname = hostname
-        self.mac = mac
-        self.os = 'in analisi...'
+        self.mac = "N/D"
+        self.hostname = "Sconosciuto"
+        self.os = "in analisi..."
+        self.tipo = "Dispositivo"  # default generico
         self.porte = []
-        self.tipo = 'N/D'
 
-    def __eq__(self, other):
-        return self.ip == other.ip and self.mac == other.mac and self.os == other.os and self.porte == other.porte
+    def __repr__(self):
+        return f"<Device {self.ip}>"
